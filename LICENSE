@@ -1,0 +1,33 @@
+LinkProven — Proprietary Software License
+Copyright (c) 2026 Mohamed Khaled. All rights reserved.
+
+This software ("LinkProven") and its source code are the proprietary property of
+Mohamed Khaled. No license, right, or interest in LinkProven is granted except as
+expressly set out below.
+
+1. Grant of use. You may download, install, and run the official packaged
+   LinkProven application for your internal network-testing purposes at no charge.
+
+2. Restrictions. Except to the extent permitted by applicable law that cannot be
+   contractually waived, you may NOT:
+   (a) sell, sublicense, rent, lease, or otherwise commercially redistribute
+       LinkProven;
+   (b) modify, adapt, translate, reverse engineer, decompile, or disassemble
+       LinkProven, or create derivative works of it;
+   (c) remove or alter any copyright, trademark, or other proprietary notices.
+
+3. Third-party components. LinkProven bundles third-party software (including
+   fping, iperf3, the Cygwin runtime, Qt/PySide6, and Python libraries) that is
+   licensed under its own terms. Those components remain governed by their
+   respective licenses, which take precedence over this license for those
+   components. See THIRD_PARTY_LICENSES.md (shipped with every release) for
+   the full notices and the corresponding-source offer for the LGPL/Cygwin
+   components.
+
+4. No warranty. LINKPROVEN IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+   MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO
+   EVENT SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY
+   ARISING FROM, OUT OF, OR IN CONNECTION WITH LINKPROVEN OR ITS USE.
+
+For licensing inquiries, contact the author via https://www.mhmd2520.com.
