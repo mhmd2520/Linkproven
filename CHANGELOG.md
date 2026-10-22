@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.7] - 2026-10-22
+
+### Changed
+
+- **The version sits under "LinkProven" at the top of the side menu**, as
+  the same labelled tag the launch splash and linkproven.com show.
+- The window's title, and so its taskbar button, is just "LinkProven"; the
+  version is on the tag and in About.
+
 ## [1.1.6] - 2026-10-22
 
 ### Changed
@@ -1392,7 +1401,8 @@ this version — see the first entry.
   (the documented default), instead of also turning PDF and TXT on.
 - The Analysis Diff tab's hint banner is now readable on the Light theme.
 
-[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v1.1.6...HEAD
+[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v1.1.7...HEAD
+[1.1.7]: https://github.com/mhmd2520/Linkproven/releases/tag/v1.1.7
 [1.1.6]: https://github.com/mhmd2520/Linkproven/releases/tag/v1.1.6
 [1.1.5]: https://github.com/mhmd2520/Linkproven/releases/tag/v1.1.5
 [1.0.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v1.0.0
