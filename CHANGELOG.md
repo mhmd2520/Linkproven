@@ -6,6 +6,248 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.5] - 2026-10-22
+
+### Changed
+
+- **A report keeps the config its run started with, not just the record.**
+  The config, the record and the armed reference are copied when a run
+  starts, so applying a Config change before "Save report now" can no
+  longer change the config a report ships with or how its cases are judged.
+  Multi-Client runs keep theirs the same way.
+- **fping options in a profile are limited to ones that can't break the
+  results**: `-l -s -D -M -R`, and `-t -r -b -B -H -O` with a number.
+  Options such as `-q`, `-A`, `-n` or `-6` passed the old check but emptied
+  the latency and loss columns.
+- **Sounds play from memory**: no sound cache folder any more. A full sound
+  queue drops a per-case cue before it drops an alert or a verdict.
+- **Closing LinkProven with the cable already unplugged** still puts the IP
+  LinkProven set back to DHCP.
+- **In-app updates stage inside LinkProven's own folder**, for portable copies
+  too, and always check the download's SHA-256 again there before
+  installing; a failed attempt cleans up after itself.
+- **Cloud sync (not yet released): a second save of a run uploads.** The
+  measurement stays immutable, but a re-save adds its new files and keeps the
+  new sidecar as a revision; a save that would change the results is still
+  refused.
+- The taskbar button follows a run's progress without polling, and the sound
+  settings are read once instead of on every sound.
+
+### Fixed
+
+- Stopping on the Client no longer shows the Server a "Client connection
+  error" banner; it says the Client closed the connection.
+- A preview in the Sounds dialog cuts in even while a sound is being prepared.
+- The Server's listener no longer spins if accepting a connection keeps failing.
+- Config: Apply refuses while the JSON pane doesn't parse (it used to apply
+  the older form values), and a half-typed JSON edit survives a tab switch.
+- Wi-Fi and Ethernet crash recovery keep retrying when a restore fails, and
+  log when there is nothing to undo.
+- Ctrl+S with every export format unticked now says nothing was saved.
+- The linkproven.com FAQ sentence about closing the app reads correctly.
+
+## [1.1.4] - 2026-10-22
+
+### Changed
+
+- **A report keeps the record the run started with.** The test point, cable
+  ID, ends and the rest of the record are captured when a run starts, and
+  the cable fields and the Plan page's "Start this TP" are locked while it
+  runs. Editing them mid-run, or loading the next test point before "Save
+  report now", can no longer relabel the data; "Save report now" also keeps
+  the subset you ran.
+- **Closing LinkProven only undoes an IP address LinkProven set.** The
+  Ethernet adapter goes back to DHCP on close only when "Set the correct IP"
+  put its address there; a static address you typed yourself (a home network
+  on 192.168.1.x) stays.
+- **The Config tab keeps changes you haven't applied** when you look at
+  another tab, and Apply now picks up a JSON-pane edit made a moment before.
+- **fping options in a profile are an allow list** (output and probe options
+  such as `-t`, `-r`, `-e`); a profile with any other fping option is refused
+  with the list. Payloads must be 1–65,507 bytes and bandwidths at least
+  1 Mbps (0 meant "unlimited" to iperf3).
+- **Loss reads the same in every format.** Excel cells hold the loss worked
+  out from the datagram counts and show "<0.001" like the Word, PDF and TXT
+  reports; the reference and comparison tables use the main table's
+  precision; comparison tables say "Latency" and "Loss", not "Avg" and
+  "Packet"; the diff's A/B labels always match its numbers.
+- **A multi-test-point session is judged on every test point.** Its sidecar
+  verdict covers all segments (a failing TP2 used to read PASS in Analysis),
+  and a judged session with a test point that ran nothing reads INCOMPLETE.
+- **CSV text cells that start like a formula** (`=`, `+`, `-`, `@`) get a
+  leading `'`, so an imported campaign can't run a formula in Excel; a plan
+  exported and imported again keeps its labels exactly.
+- **Cloud sync (not yet released): runs are immutable in the cloud.** A run
+  uploads once; another save of it stays on the laptop. Only an owner
+  deletes a run, no report file can be deleted while a run lists it, and a
+  campaign id belongs to its workspace.
+- **An installed copy stages its updates inside its own folder**, which only
+  administrators can write, and checks the download's SHA-256 again there
+  before installing; a portable copy checks it again in place.
+
+### Fixed
+
+- **Sounds no longer cut each other off.** Windows plays one sound at a
+  time, so "Report saved" and the last case's cue were cut short by the
+  sound that followed. Cues now play one after another, and a sound's
+  first play no longer freezes the window for a moment.
+- **A run ends with one sound.** An aborted sweep used to sound the
+  disconnect, then "Run finished", then a warning; now the abort sounds once.
+  A continuous run plays its start sound once, not once per test point.
+- **Pressing Stop on the Client no longer sounds the disconnect alarm on the
+  Server**, and a per-case error the sweep carries on past no longer counts
+  as the run's one disconnect (which used to leave a real cable pull silent).
+  Stopping on the Server mid-case no longer reads as "client disconnected".
+- Stopping while the Client is still connecting no longer raises a "Server
+  connection error" banner, and a Stop clicked in the first instant of a run
+  is no longer ignored.
+- "Quiet during a sweep" no longer silences "Run finished" outside a run.
+- A copied path from a toast now pastes into Explorer (hidden wrap
+  characters were copied with it). Ctrl+S with every export format unticked
+  says nothing was saved instead of "Saved 0 file(s)".
+- When iperf3 fails at the start of a case, the case now ends at once
+  instead of pinging out its full 30 s.
+- iperf3 output with a negative lost count (duplicate datagrams) parses, and
+  100 % loss reads "100%" in the Multi-Client live log, not "1e+02%".
+- The Server's listener survives a connection reset before accept.
+- A reference limit of 0 (e.g. loss ≤ 0) now reads a clean 0 as PASS, not
+  MARGINAL.
+- Analysis: a new run arriving no longer moves your ticks to other runs. A
+  blank export folder exports to the reports folder, not the working folder.
+  Notes and run names with `<` or `&` no longer break the comparison PDF.
+- The in-app updater refuses to install over a folder that isn't
+  LinkProven's own (it would have deleted the other files in it).
+- Help and About links open the browser as you, not as administrator.
+- Wi-Fi crash recovery keeps retrying if re-enabling Wi-Fi fails. Adapters
+  named "WLAN" (localised Windows) are no longer taken for the wired NIC,
+  and adapter names with a typographic apostrophe work in PowerShell.
+- A malformed cloud-sync outbox note is set aside instead of stopping every
+  upload. Plan: a failed campaign save or rename now says so. Config: a
+  corrected field clears the red error. The summary sheet closes when the
+  run page is rebuilt.
+
+## [1.1.3] - 2026-10-22
+
+### Changed
+
+- **A white logo on the light theme.** In the app (splash, rail, welcome
+  tour) and on linkproven.com (header, footer, intro and the tab icon), a
+  light page now shows the logo on a white tile with a soft grey edge and
+  shadow, and the mark in deeper cyans. Dark pages keep the navy tile, and
+  so do the desktop, taskbar and installer icons, which Windows shows the
+  same whatever the app's theme.
+
+### Fixed
+
+- The logo and "LinkProven" at the top of the rail now sit on one line; the
+  logo used to sit a few pixels lower than the wordmark.
+- The site intro's shadows were drawn at full strength, which a dark page
+  hid; they now match the icon.
+
+## [1.1.2] - 2026-10-22
+
+### Changed
+
+- **The new icon is the logo everywhere in the app and on the website.**
+  The launch splash now builds the navy tile up: the tile fades in, the two
+  dots pop in, the pulse draws between them and the glow settles, on the
+  same timing as before. The rail, the welcome tour, linkproven.com's
+  header, footer, first-visit intro, browser-tab and home-screen icons and
+  its link-preview card all use the tile. Word and PDF reports keep the
+  flat line mark in their header.
+
+## [1.1.1] - 2026-10-22
+
+### Changed
+
+- **A new app icon you can actually see.** The desktop shortcut, taskbar,
+  title bar and installer used the bare thin pulse, which all but vanished
+  on a wallpaper. The icon is now the pulse on a navy tile lit from above,
+  with a fine bevelled edge and a soft shadow under the mark. The line and
+  dots are drawn per size, so at 16 and 24 px the two dots still read as
+  dots and the spike as a line. The splash, rail, reports and website keep
+  the flat mark.
+
+## [1.1.0] - 2026-10-22
+
+The "Feel" release: you can follow a sweep by ear and from a glance at the
+taskbar, notices no longer block the window, and the keyboard reaches every
+page.
+
+### Added
+
+- **A sound for each moment.** Run start, warm-up settled or failed, each
+  case (clean or with loss), a retry, run finished, the four verdicts (PASS,
+  FAIL, REPEAT, INCOMPLETE), report saved, an error, a Wi-Fi block, a
+  disconnect and a question each have their own sound. Choose **Sonar**
+  (soft pings with an echo, the default), **Tick**, **Retro** or **Silent**
+  per event, with a ▶ preview, under Setup → Appearance → **Sounds…**. The
+  sounds are generated by the app itself (no audio files ship) and played
+  through Windows.
+- **When to stay quiet.** Volume; **Quiet during a sweep** (only the run
+  start, the verdict, errors, Wi-Fi blocks and disconnects); **Respect
+  Windows "Do not disturb"** (silent in presentation mode, a full-screen app
+  or quiet hours, with errors and disconnects still allowed through); and
+  **Use Windows system sounds instead** for anyone who prefers their own
+  sound scheme. Button-click and page-change ticks are there too, off by
+  default.
+- **Never just a sound.** When LinkProven is behind other windows its
+  taskbar button flashes for a verdict, an error or a disconnect. While a
+  test runs, the button fills like a progress bar, and turns red after an
+  error. On the Results tab each case's cell flashes once as it finishes,
+  unless Windows animations are off.
+- **Notices at the bottom right.** "Report saved" (with **Open folder**),
+  "Nothing to fix", "Sweep stopped, nothing saved" and the other notices
+  that needed no answer used to open a window you had to close. Now they
+  appear at the bottom right and close after about 5 s; hover one to keep
+  it open. They are read out by screen readers and never cover the run
+  summary. Questions still wait for you.
+- **Keyboard shortcuts.** Ctrl+1 … Ctrl+9 and Ctrl+0 go to the ten pages,
+  F5 runs, Esc stops (after asking), Ctrl+S saves the report, F1 opens Help
+  for the page you are on, and Ctrl+/ lists them all. The rail and the
+  Run / Stop buttons show their keys.
+
+### Changed
+
+- The old single "Play notification sounds" switch is now the master
+  switch beside **Sounds…**. A disconnect or warm-up failure sounds when it
+  happens, not again when the run ends.
+
+### Also in this release
+
+- **Cloud sync, opt-in (platform P2; not active in any build yet).** Sign in
+  without a password: Google or Apple in your own browser, or a 6-digit
+  code from your email. Then turn on **Upload saved reports to my account**
+  on Save Options. Saving never waits for the network: each run is queued
+  in `%APPDATA%\LinkProven\outbox` and uploaded in the background, with
+  retries. A sign-in token and the account's email are kept in Windows
+  Credential Manager; the browser sign-in runs as you, never as
+  administrator.
+  The panel appears only in a build that has a cloud environment, and none
+  does until the hosted projects exist; until then the app behaves as if
+  sync did not exist.
+- Supabase backend for it: workspaces (a personal one per user; teams
+  later) owning `devices`, `campaigns` (with their plans), `runs`,
+  `run_sidecars`, `run_points` and `run_files`, the private `reports`
+  bucket and `ingest_run()`, with every client write going through that one
+  function. Deleting a user's account keeps the workspace's records. See
+  `docs/adr/0001-platform-backend.md`.
+
+- **Stable ids (sidecar schema 9).** Every run gets a `run_uuid` when it
+  starts, so all saves of one run are the same run, and its sidecar records
+  `utc_offset_min` so the start time is a real instant wherever it is read.
+  Every campaign file gets a permanent `id`, kept through renames and
+  written into each record saved under it; older campaign files get one the
+  first time they are opened. Older reports read exactly as before.
+
+### Changed
+
+- Campaign status reads saved runs through `core.run_index`, the code the
+  cloud's index is tested against, so each saved run gives the same test
+  points and verdicts on the Plan page as in the portal.
+- A test-point number typed in Arabic-Indic digits (`TP ٣`) is still read as
+  `TP3`; other scripts' digits are no longer treated as numbers.
+
 ## [1.0.0] - 2026-10-21
 
 PingPair is now **LinkProven** (linkproven.com). This is the first LinkProven
@@ -1141,7 +1383,8 @@ this version — see the first entry.
   (the documented default), instead of also turning PDF and TXT on.
 - The Analysis Diff tab's hint banner is now readable on the Light theme.
 
-[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v1.1.5...HEAD
+[1.1.5]: https://github.com/mhmd2520/Linkproven/releases/tag/v1.1.5
 [1.0.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v1.0.0
 [0.6.3]: https://github.com/mhmd2520/PingPair/releases/tag/v0.6.3
 [0.6.2]: https://github.com/mhmd2520/PingPair/releases/tag/v0.6.2
