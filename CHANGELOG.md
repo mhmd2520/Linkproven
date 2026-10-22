@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.6] - 2026-10-22
+
+### Changed
+
+- **The version is a labelled tag on the launch splash**: a pill with a
+  tinted brand fill and outline, instead of faint grey text under the
+  wordmark. linkproven.com shows the same tag under the wordmark in its
+  header, and in its intro and footer.
+
 ## [1.1.5] - 2026-10-22
 
 ### Changed
@@ -1383,7 +1392,8 @@ this version — see the first entry.
   (the documented default), instead of also turning PDF and TXT on.
 - The Analysis Diff tab's hint banner is now readable on the Light theme.
 
-[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v1.1.5...HEAD
+[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v1.1.6...HEAD
+[1.1.6]: https://github.com/mhmd2520/Linkproven/releases/tag/v1.1.6
 [1.1.5]: https://github.com/mhmd2520/Linkproven/releases/tag/v1.1.5
 [1.0.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v1.0.0
 [0.6.3]: https://github.com/mhmd2520/PingPair/releases/tag/v0.6.3
