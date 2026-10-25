@@ -6,6 +6,112 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-10-25
+
+Evidence & history. Scope: `plan.md` "v1.2.0 Evidence & history".
+
+### Added
+
+- A saved report can be rebuilt from its `.json` record, so a past run can
+  be rendered again (the base for anonymised copies, certificates and
+  verification).
+- **Record integrity on the cover.** Every Word and PDF report now carries
+  the SHA-256 of its `.json` record and a QR code. A phone camera opens the
+  run's summary (verdict, test point, cable, key numbers) on
+  linkproven.com; the summary lives in the link itself, so nothing is
+  uploaded. The text and Excel reports carry the hash and link too. Save
+  Options → "Integrity QR + hash on the cover" turns it off (on by
+  default).
+- **Verify report** (Analysis): pick a run's `.json` record, or right-click a
+  listed run, and LinkProven re-hashes it and checks that the Word, Excel
+  and PDF reports beside it were made from it.
+- **Bench-baseline library.** Keep several named bench baselines (for
+  example one per laptop pair) and pick one on Single-Client → Validation;
+  rename or delete them there. A campaign can name its baseline (Plan page),
+  and choosing the campaign makes it the active one. The panel warns when
+  the active baseline was measured on other laptops. The baseline from
+  1.1.x joins the library on first launch.
+- **Per-cable history** (Analysis → Cables): every Cable ID in your saved
+  reports, most recently tested first. Pick one to see each run of it across
+  campaigns, laptop pairs and dates, with its verdict, UDP loss trend and the
+  baseline that judged it; **Tick these runs** puts them on the charts and
+  in Diff.
+- **Retest chain.** A retest's report says which attempt it is and lists the
+  earlier ones with their verdicts ("3rd attempt · earlier: FAIL …,
+  REPEAT …"), and the Plan page's status keeps the earlier verdicts beside
+  the newest, so a FAIL never disappears behind a later PASS.
+- **Diff, reworked** (Analysis → Diff): pick any two ticked runs as A and B
+  (with Swap), switch between the per-case table and a payload × bandwidth
+  **matrix** of one metric's change, and read a one-line tally ("B better in
+  14 case(s), worse in 3 …"). Cases that ran in only one run say so. Each
+  run's test point and cable are shown, and the exported comparison report
+  carries the tally too.
+- **Photos of the cable** (Single-Client → Record details): add pictures of
+  the label and the connectors from disk, each with a caption. They are
+  shrunk to about 250 KB and stripped of camera data (GPS, serial numbers),
+  saved in a Photos folder beside the report, shown two per row in the Word
+  and PDF reports, and their hashes go in the `.json` record so Verify can
+  check them. Photos belong to the test point and cable they were added for.
+- **One-page cable certificate.** Save Options → "One-page certificate"
+  writes an A4 one-pager per test point beside the report: the verdict, the
+  cable and test-point facts, the four key numbers, the sign-off lines and
+  the QR. In Analysis, right-click a run → "Make one-page certificate" for a
+  run saved earlier. Only a run with a verdict gets one.
+- **Customer report templates** (Plan page → Templates…): a template holds
+  a customer's name and logo (shown on the cover, "Prepared for …"), the
+  three sign-off parties, default contract and procedure, which optional
+  sections the report keeps, and a filename pattern with `{campaign}`,
+  `{train}` and `{cable}`. Choose one per campaign; it fills the campaign's
+  empty fields, and each run keeps a copy, so editing the template later
+  cannot change a saved report.
+- **Anonymised copy** (Analysis → right-click a run, or Save Options): a copy
+  of a report to share with a vendor, on a forum or in a bug report. IP and
+  MAC addresses, hostnames, adapter names, people, customer and site
+  details, and serial numbers become stable tokens (IP-1, Host-1,
+  Person-1 …) in every format; the measurements, verdicts and cable IDs
+  stay. Photos are left out. The copy goes in an Anonymised folder and never
+  shows up as a run or reaches cloud sync.
+- **Handover pack** (Plan page): one zip per campaign with every saved run
+  (reports, records, charts, photos, certificates), the plan, a status table
+  of every test point with its earlier attempts, and a `SHA256SUMS` file
+  the client can check with `sha256sum -c`.
+
+### Fixed
+
+- The Record details notes box kept its three-line height (the theme had
+  squeezed it to one line).
+- A `/` in a cable ID or train set no longer wipes the rest of the report
+  folder name ("CML1/2PK211-07" used to leave only "2PK211-07").
+- The `.json` record is written before the reports, so a report that fails
+  to render (a bad logo, say) no longer loses the run's data with it.
+- The anonymised copy no longer turns numbers inside dates or commands into
+  tokens, and also replaces computer serials and the server's hostname in
+  the raw iperf3 output.
+- Saving the same run twice no longer counts it as two attempts in a
+  cable's history; session certificates for test points with similar names
+  no longer overwrite each other; a library file that can't be read is
+  skipped instead of stopping the page.
+
+### Changed
+
+- The `.json` record is written with LF line ends on every machine, so its
+  hash is the same wherever it is checked.
+- The run summary page the QR opens says its facts are "as printed, not
+  checked" until you drop the run's `.json` on it, then checks each one
+  against the record and names any that differ.
+- Verify says a Word or PDF report *carries this hash* (its cover names the
+  record) rather than *matches*: the record is checked, not edits made inside
+  the report. Photos are re-hashed and still say *Matches*.
+- A certificate or anonymised copy made later from a past run keeps the
+  verdict the run was saved with: if today's LinkProven would judge it
+  differently, it says so and writes nothing. A certificate saved with the
+  run is never replaced (the new one is named `…_reissued_<date>`).
+- The customer logo is kept in the run folder, so the report re-renders with
+  it on another laptop and the handover pack carries it.
+- Diff counts small wobbles as "the same": ±1 % of the offered rate for
+  throughput, ±0.1 ms latency, ±0.005 points of loss, ±0.05 ms jitter. The
+  tally line says which band it used.
+
 ## [1.1.7] - 2026-10-22
 
 ### Changed
@@ -1401,7 +1507,8 @@ this version — see the first entry.
   (the documented default), instead of also turning PDF and TXT on.
 - The Analysis Diff tab's hint banner is now readable on the Light theme.
 
-[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v1.1.7...HEAD
+[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v1.2.0
 [1.1.7]: https://github.com/mhmd2520/Linkproven/releases/tag/v1.1.7
 [1.1.6]: https://github.com/mhmd2520/Linkproven/releases/tag/v1.1.6
 [1.1.5]: https://github.com/mhmd2520/Linkproven/releases/tag/v1.1.5
