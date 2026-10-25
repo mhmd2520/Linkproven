@@ -6,6 +6,66 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-10-25
+
+Insight visuals. Scope: `plan.md` "v1.3.0 Insight visuals".
+
+### Added
+
+- Each case now keeps its ping round trip for every second, so a latency
+  spike can be placed in time. With cable validation on, both laptops' card
+  counters are also read once a second through each case (an older Server
+  just doesn't send its half).
+- **Insight charts on Single-Client → Results**, filled case by case, with a
+  "Show" picker for the whole run or one case:
+  - **Where the packets went:** datagrams sent → out of the Client card →
+    into the Server card → received, each loss branching off where it
+    happened (on the cable, or inside the receiving laptop).
+  - **Delivered vs offered:** every case against the ideal line, with cases
+    over the link's capacity ringed.
+  - **Seconds by datagrams lost:** tells a burst (a laptop) from loss
+    spread across the case (the cable).
+  - **Jitter per second, by payload:** one curve per packet size.
+  - **Ping round trip per second:** a heat strip of cases × seconds.
+  - **Card counters per second:** packets, errors and discards for both
+    laptops across the sweep.
+- **Session chart** above the case matrix in continuous mode: warm-up, each
+  test point and its retries to scale, the campaign's remaining points, and
+  the time to the end of the plan.
+- **Live link pulse:** on the Validation tab the link diagram flows at the
+  rate the Client is sending while a case runs, grey until a case's loss is
+  counted and then coloured by the loss so far. It rests between cases and
+  stays still when Windows' "Show animations" is off.
+- **Train map** on the Plan page: set the cars (front to back) and every
+  test point is drawn where its ends are, coloured by its latest verdict.
+  Double-click a point to start it.
+- **Loss fingerprints:** a tiny payload × bandwidth grid beside each run in
+  Analysis and each attempt in a cable's history.
+- **Insight charts in Word/PDF** (Save Options, off by default): the Word and
+  PDF reports gain the same charts after the case matrix, plus a session's
+  timeline. Each appears only when its data exists. Text, Excel and CSV
+  reports don't change, and with the option off every document is exactly
+  as 1.2.0 wrote it. The `.json` record notes the choice, so an anonymised
+  copy made from it draws the same charts.
+- Help: "Reading the insight charts" (Single-Client), the train map (Plan),
+  loss fingerprints (Analysis) and the new Save Options switch.
+
+### Changed
+
+- The `.json` record is now schema 11. The new per-second keys appear only
+  when a run recorded them, so older readers see the cases they already
+  knew.
+
+### Fixed
+
+- The live link pulse starts neutral (grey) until a case's loss has been
+  counted, instead of reading as "nothing lost" before there is any count.
+
+### Security
+
+- Per-second data read from saved records, campaign files or the Server is
+  size-capped, so a malformed or oversized file can't freeze the app.
+
 ## [1.2.0] - 2026-10-25
 
 Evidence & history. Scope: `plan.md` "v1.2.0 Evidence & history".
@@ -1507,7 +1567,8 @@ this version — see the first entry.
   (the documented default), instead of also turning PDF and TXT on.
 - The Analysis Diff tab's hint banner is now readable on the Light theme.
 
-[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v1.3.0
 [1.2.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v1.2.0
 [1.1.7]: https://github.com/mhmd2520/Linkproven/releases/tag/v1.1.7
 [1.1.6]: https://github.com/mhmd2520/Linkproven/releases/tag/v1.1.6
