@@ -6,6 +6,100 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-10-26
+
+Operations. Scope: `plan.md` "v1.4.0 Operations".
+
+### Added
+
+- **Live mirror on the Server laptop.** The Server page now shows the
+  Client's sweep as it runs: the case matrix, the timeline and the running
+  verdict. The Client sends this as optional extras on messages it already
+  sends, so an older Server simply ignores them. With an older Client the
+  Server colours each case from its own receive counts and says the verdict
+  comes from the Client.
+- **Witness view** (F11, or *More* on Single-Client and the button on the
+  Server page): the run full window in large type, so a witness standing a
+  few metres away can follow it. Esc closes it.
+- **2-minute screening** (Single-Client → *More* → *Screen (2 min)*): four short
+  cases (200 B and 1300 B at 50 and 90 Mb/s, 15 s each) to triage a cable
+  before a full sweep. It never gives PASS or FAIL, only *Looks clean* or
+  *Worth a full sweep*, and every report it saves says SCREENING. Analysis,
+  baselines, campaign status and cable history never count it.
+- **Soak runs** (Single-Client → *More* → *Soak…*): repeat the ticked cases
+  every N minutes for H hours, or from a set time. Each round saves its own
+  report, and a soak summary lists the verdict per round plus the worst case
+  and when it happened. A disconnect or Stop ends the soak, and the summary
+  still saves.
+- The laptop no longer goes to sleep while a sweep, a screening or a soak
+  is running.
+- **Set up a Linux server** (Setup → *Server is Linux…*, Client role): one
+  script for Debian/Ubuntu, RHEL, SUSE, Alpine or Arch that installs iperf3,
+  opens the firewall and runs it as a service that survives a reboot.
+  Optionally it installs the **LinkProven server agent**, so a Linux Server
+  answers Single-Client sweeps and gives Server-side evidence. Anything the
+  agent can't read is reported as not recorded. The agent is downloaded from
+  the release and checked against its SHA-256 before it is installed.
+- **Status chips that act:** click Role to change it, Link for the laptop
+  readiness checks, or Target to ping it.
+- **Getting started checklist** on Setup: choose a role, set the IP, laptop
+  readiness, ping the other laptop, run a first sweep. Each step ticks
+  itself and has a *Go* button. Hide it once you are done; a factory reset
+  brings it back.
+- **Empty pages say what goes there:** Analysis with no saved sweeps offers
+  *Run a sweep* and *Open demo data* (three demo sweeps, shown read-only),
+  the Results tab says what fills it, Multi-Client with no server offers to
+  set one up, and an empty Cables list says where Cable IDs come from.
+- **Low light theme** (Setup → Appearance) for dark depots and night shifts:
+  dim surfaces and amber accents. Verdict colours and the dark charts are
+  unchanged.
+- **Compact density** (Setup → Appearance) tightens rows and padding, so the
+  whole 20-case table fits on a 1366×768 screen at 125 %.
+- **Pin the rail** to keep it icon-only on a wide window.
+- The app now remembers the Single-Client and Analysis splitters, the last
+  Results and Analysis tabs, and which runs were ticked in Analysis.
+- Test points can name the car each end sits in (**From car** / **To car**
+  on the Plan page and in the CSV). The train map uses them before guessing
+  from the From / To text.
+
+### Changed
+
+- One poller per network adapter now serves the link-flap watcher, the
+  disconnect monitor and the per-second card counters. Before, three threads
+  polled the same card during every case.
+- The Validation grid, the timeline and the Server mirror all judge cases
+  with the same code, so they can never disagree.
+
+### Fixed
+
+- The end-of-run summary could crash on the "ask to save" path when cable
+  validation was off and no reference was armed.
+- On Multi-Client, a long server-command block (the new 21-line service
+  install) was squeezed behind a scrollbar under the theme.
+- Closing the app (or the screening window) while a screening ran could
+  leave its test running in the background and the laptop kept awake.
+- Closing the app during a soak now still writes the soak summary. A soak
+  round you stop is no longer auto-saved, and a round whose report failed
+  to save says so in every summary format.
+- The Server's live view and witness view no longer show the previous
+  sweep's colours on cases that haven't run yet.
+- An older Client's UDP case in which the Server counted no datagrams no
+  longer shows as a clean case.
+- Saving a chart while demo data is shown now goes to your reports folder,
+  not the demo's temporary copy, and that copy is removed when you close
+  the app.
+- The Getting started checklist showed empty for its first two seconds.
+
+### Security
+
+- The Linux server agent refuses to listen on every interface (0.0.0.0) or
+  a multicast address. Its control channel has no login, so it must sit on
+  the test link's own address.
+- In the hand-pasted agent commands, a checksum mismatch now also removes
+  any older copy of the agent, so the service has nothing to start.
+- Text from the peer (the sweep id) is cleaned before it reaches the
+  agent's log.
+
 ## [1.3.0] - 2026-10-25
 
 Insight visuals. Scope: `plan.md` "v1.3.0 Insight visuals".
@@ -1567,7 +1661,8 @@ this version — see the first entry.
   (the documented default), instead of also turning PDF and TXT on.
 - The Analysis Diff tab's hint banner is now readable on the Light theme.
 
-[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v1.4.0
 [1.3.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v1.3.0
 [1.2.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v1.2.0
 [1.1.7]: https://github.com/mhmd2520/Linkproven/releases/tag/v1.1.7
