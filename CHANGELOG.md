@@ -6,6 +6,56 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-10-26
+
+Hardening: the seven items the v1.4.0 review set aside. Scope: `plan.md`
+"v1.5.0 Hardening". A normal sweep's documents are unchanged from 1.4.0.
+
+### Added
+
+- **Linux agent token** (Setup → *Server is Linux…* → *Require a token*, on
+  by default): the agent refuses any Client that cannot prove this laptop's
+  token. The token itself never crosses the network: the Client proves it
+  with a one-time code. It keeps other laptops out; it is not a defence
+  against someone tapping the test cable. It lives in this laptop's settings,
+  never in a profile or report; *Copy* it to a second Client laptop.
+- With a **Client address** set, the Linux agent serves that address only
+  and refuses every other one (checked by the agent itself, so it holds with
+  the firewall off), and its firewall rule admits only it. Tokens are at
+  least 32 characters.
+- A screening run or a soak round **says so on the Server** page and its
+  witness view; a screen ends there with *Looks clean* / *Worth a full sweep*.
+
+### Changed
+
+- **The Linux agent's Python packages are pinned.** The setup installs exact
+  versions with every wheel's SHA-256 (`pip install --require-hashes
+  --only-binary :all:`), from a list inside the checksum-verified agent, so
+  the server never takes whatever the package index serves that day.
+- **One judgement per case.** The Validation grid and its verdict line now
+  draw the judgement the sweep itself makes as each case finishes, against
+  the bench baseline that was active when the run started (the one the saved
+  report uses), instead of judging again against the live baseline.
+- **The soak summary is written after every round**, not only at the end, so
+  a power cut or a killed app overnight still leaves the rounds so far
+  (marked *still running when written*). The finished summary replaces it.
+
+### Fixed
+
+- A Linux agent token refusal no longer reads as a "Server connection error";
+  a soak it ends says the Server refused the token.
+- Re-running the Linux server set-up now restarts the agent, so a new token
+  or Client address takes effect at once.
+- Clearing the token field no longer replaces the saved token, and *Paste*
+  replaces it instead of appending.
+- A failed package install in the pasted set-up no longer leaves an agent
+  that restarts in a loop.
+- A soak whose summary could not be written for a round no longer starts a
+  second summary folder.
+- Unsubscribing from the network-card poller now waits for a reading still
+  being delivered, so a sampler or link watch never receives one after it
+  stopped.
+
 ## [1.4.0] - 2026-10-26
 
 Operations. Scope: `plan.md` "v1.4.0 Operations".
@@ -1661,7 +1711,8 @@ this version — see the first entry.
   (the documented default), instead of also turning PDF and TXT on.
 - The Analysis Diff tab's hint banner is now readable on the Light theme.
 
-[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v1.4.0...HEAD
+[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v1.5.0...HEAD
+[1.5.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v1.5.0
 [1.4.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v1.4.0
 [1.3.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v1.3.0
 [1.2.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v1.2.0
