@@ -6,6 +6,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.0] - 2026-10-27
+
+Test types. Scope: `plan.md` "v1.6.0 Test types". A UDP sweep with no DSCP
+gives the same documents as 1.5.0.
+
+### Added
+
+- **TCP retransmits, round trip and congestion window.** A TCP sweep now
+  records, for every case and every second, how many segments the Client
+  laptop had to send again, TCP's own round trip and the congestion window
+  (per case, the largest). Windows keeps these per connection and LinkProven reads them while
+  the case runs (the bundled iperf3 cannot report them on Windows). Reports
+  show *Retransmits* and *TCP RTT* in place of jitter and loss, the workbook
+  gains a *TCP* sheet, and the CSV gains `tcp_*` columns. A case whose
+  numbers could not be read says *not recorded*, never zero.
+- **DSCP marking** (Config → *DSCP marking*: EF 46, AF41 34, CS6 48, CS0 0 or
+  any value 0-63). For the sweep, LinkProven adds a temporary Windows QoS
+  policy that marks the Client's test traffic and pings, and removes it when
+  the sweep ends (it cannot outlive a restart either). During the first case
+  it captures its own iperf3 packets with `pktmon` and the report says
+  whether the marking was **verified leaving this laptop**, **not marked**, or
+  **not checked** (the pings are marked too, but not checked). If you are
+  running your own `pktmon` capture, it is left alone and the report says
+  *not checked*.
+- **Replay a run** (Analysis → right-click a run → *Replay this run…*): loads
+  the run's exact plan, protocol, DSCP, ping settings, cable validation,
+  reference, case subset and baseline, after listing every setting that
+  changes. This laptop's network settings stay. *Undo replay* on
+  Single-Client brings your settings back, and the next sweep's reports say
+  *Replay of …* if the settings were not changed in between.
+
+### Changed
+
+- The Validation grid and verdict line judge with the same code and inputs
+  as the sweep itself, so there is one way a case is judged, not two.
+- A TCP run's jitter and loss read *—* (not measured) in every report and in
+  Analysis, including runs saved before 1.6.0. They used to read 0.000, like
+  a perfect UDP run.
+- Analysis no longer compares a UDP run with a TCP run case by case.
+- Records are schema 13 (additive: `tcp`, `dscp`, `replay_of`, each only when
+  set).
+
 ## [1.5.0] - 2026-10-26
 
 Hardening: the seven items the v1.4.0 review set aside. Scope: `plan.md`
@@ -1711,7 +1753,8 @@ this version — see the first entry.
   (the documented default), instead of also turning PDF and TXT on.
 - The Analysis Diff tab's hint banner is now readable on the Light theme.
 
-[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v1.5.0...HEAD
+[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v1.6.0...HEAD
+[1.6.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v1.6.0
 [1.5.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v1.5.0
 [1.4.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v1.4.0
 [1.3.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v1.3.0
