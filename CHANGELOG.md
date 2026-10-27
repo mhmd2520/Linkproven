@@ -6,6 +6,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.0] - 2026-10-27
+
+Reach. Scope: `plan.md` "v1.7.0 Reach". Reports, sidecars and the control
+protocol are unchanged from 1.6.0.
+
+### Added
+
+- **Command palette (Ctrl+K).** A search box over every page, the run
+  actions (Run, Stop, Save, witness view, screening, soak, Linux server
+  setup, Analysis demo), your saved profiles, your recent reports, the
+  theme / density / touch / role / sound settings and every Help section.
+  Type a few letters of each word (*last rep*, *role cl*) or the initials
+  (*lr*), then press Enter. With nothing typed, the commands you used last
+  come first. Each command does exactly what its button does, so a profile
+  still waits for *Apply*, Stop still asks first and the role can't change
+  mid-sweep. A command that can't run right now is greyed out and says why.
+- **Touch mode** (Setup → Appearance → *Touch*: Auto / On / Off). It gives
+  44-pixel buttons, inputs and table rows, taller rail items, bigger check
+  boxes, wider scroll bars, flick scrolling, and a swipe between the
+  Single-Client tabs (Live log / Results / Charts / Validation) and the
+  Analysis chart tabs (on a chart, swipe on the tab row). Press and hold anything for its tooltip, and tap a chart
+  cell for its readout. *Auto*, the default, turns it on only when Windows
+  reports a built-in touch screen held as a tablet on a tablet or 2-in-1, and
+  off again in laptop posture; a touch-screen laptop that doesn't fold stays
+  as it is. While it is on, it overrides *Density*.
+
+### Security
+
+- Folders and files LinkProven opens for you (report folders, the log and
+  user-data folders, the licence notices) now go to Windows Explorer, which
+  opens them as you. Before, they were opened by LinkProven itself, which
+  runs as administrator, so a file planted in a writable reports folder could
+  have run with those rights. A saved report folder that turns out to be a
+  file is ignored.
+
 ## [1.6.0] - 2026-10-27
 
 Test types. Scope: `plan.md` "v1.6.0 Test types". A UDP sweep with no DSCP
@@ -1753,7 +1788,8 @@ this version — see the first entry.
   (the documented default), instead of also turning PDF and TXT on.
 - The Analysis Diff tab's hint banner is now readable on the Light theme.
 
-[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v1.6.0...HEAD
+[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v1.7.0...HEAD
+[1.7.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v1.7.0
 [1.6.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v1.6.0
 [1.5.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v1.5.0
 [1.4.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v1.4.0
