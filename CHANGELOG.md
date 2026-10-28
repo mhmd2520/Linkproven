@@ -6,6 +6,49 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-10-28
+
+Portal hardening. Scope: `plan.md` "v2.1.0 Portal hardening". The Windows
+app is unchanged from 2.0.0: same reports, records and control protocol. This
+release is about your LinkProven account and the portal at
+`app.linkproven.com`.
+
+### Added
+
+- **Delete your account yourself** (portal → Account → Delete account). You
+  confirm with your email address. If you signed in more than 10 minutes
+  ago, you also confirm with a fresh sign-in code.
+  - Right away, your account closes and you are signed out everywhere, the
+    desktop app included. You leave every team that has other members, and
+    your share links stop working.
+  - 30 days later, your personal workspace (runs, report files, laptops) and
+    any team where you are the only member are erased for good.
+  - Runs you uploaded to a team stay with that team. Within the 30 days,
+    support@linkproven.com can undo it.
+  - While you are a team's only owner and others still belong to it,
+    deletion waits until you make someone else owner.
+- **Team invites are emailed** to the invitee, from
+  `invites@linkproven.com`. **Email again** resends one. If the email cannot
+  go, the portal tells you what to ask them instead.
+- **All share links in one place:** a workspace's owners see every live link
+  in it (which run, who made it, when it expires) and can revoke any of them.
+
+### Changed
+
+- **A team always keeps an owner**, whatever removes a member.
+- **The server's file checks no longer stall** on a file that cannot be
+  read. It waits behind the others, so every other file still gets checked.
+
+### Security
+
+- **Invite emails cannot be used to send spam or phishing.** The subject and
+  every sentence are fixed. The team name appears only quoted and cleaned, and
+  the only link is the portal's. Sends are limited per address, per team, per
+  user and per day.
+- **A closing account cannot create anything** (teams, invites, memberships,
+  share links) that would outlive it. Only accounts that were actually closed
+  are ever erased.
+
 ## [2.0.0] - 2026-10-28
 
 Portal. Scope: `plan.md` "v2.0.0 Portal". Reports, sidecars and the control
@@ -1845,7 +1888,8 @@ this version — see the first entry.
   (the documented default), instead of also turning PDF and TXT on.
 - The Analysis Diff tab's hint banner is now readable on the Light theme.
 
-[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v2.1.0...HEAD
+[2.1.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.1.0
 [2.0.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.0.0
 [1.7.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v1.7.0
 [1.6.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v1.6.0
