@@ -6,6 +6,63 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-10-28
+
+Portal. Scope: `plan.md` "v2.0.0 Portal". Reports, sidecars and the control
+protocol are unchanged from 1.7.0. This build connects to the hosted
+LinkProven service (Supabase, Frankfurt, EU): nothing leaves the laptop until
+you sign in and turn uploads on.
+
+### Added
+
+- **The LinkProven portal** at `app.linkproven.com`: sign in with an emailed
+  code, then see every synced run.
+  - **Dashboard:** pass rate, open FAIL / REPEAT test points, latest runs and
+    your laptops.
+  - **Reports:** filtered lists whose filters are links, and each run's
+    judgement, results and report files.
+  - **Campaigns:** how far each campaign has got, point by point.
+  - **Devices:** rename or remove your laptops.
+  - **Compare and trends:** two to four sweeps side by side, and how each test
+    point holds up over a campaign.
+  - **Export:** a ZIP of any filtered set, with a `manifest.csv` that checks
+    every file's SHA-256.
+  - **Share links:** one run for anyone with the link, up to 30 days,
+    revocable.
+  - **Team workspaces:** invite people by email (they accept or decline),
+    give them roles, and see who is in.
+- **The server checks every stored report file.** It re-hashes the file and
+  shows "verified by the server", or "DOES NOT MATCH" in red, beside the hash
+  the laptop reported.
+- **Upload existing reports** (Save Options → Cloud sync): counts the runs
+  saved before uploads were on, says how many are not in your account yet,
+  and uploads them only when you say so.
+- **Upload to:** choose which of your team workspaces this laptop's reports
+  go to.
+
+### Changed
+
+- **Re-saves no longer re-send stored files.** The uploader asks first and
+  sends only files the account does not have yet, which saves the field
+  link on every re-save.
+- **The privacy policy** now says what cloud sync and the portal store, where
+  (the EU, Frankfurt) and for how long.
+- **The server reads current records.** It now accepts records from 1.2.0
+  and later (record schema 13) plus screening runs and soak summaries. Before
+  this, such runs would have waited in the outbox for ever.
+- **Uploads that hit an upload limit wait and retry.** They are no longer
+  marked failed.
+
+### Security
+
+- **Uploads are limited** per user, per workspace and per day, on stored
+  bytes and on re-saves.
+- **Nobody joins a team without accepting.** An invite reaches only the
+  verified email it was sent to.
+- **Share links** are stored only as hashes. They never show the laptops,
+  the addresses or the raw tool output, and they stop working when their
+  maker leaves the workspace.
+
 ## [1.7.0] - 2026-10-27
 
 Reach. Scope: `plan.md` "v1.7.0 Reach". Reports, sidecars and the control
@@ -1788,7 +1845,8 @@ this version — see the first entry.
   (the documented default), instead of also turning PDF and TXT on.
 - The Analysis Diff tab's hint banner is now readable on the Light theme.
 
-[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v1.7.0...HEAD
+[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.0.0
 [1.7.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v1.7.0
 [1.6.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v1.6.0
 [1.5.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v1.5.0
