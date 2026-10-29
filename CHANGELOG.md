@@ -6,6 +6,56 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.0] - 2026-10-29
+
+History index. Scope: `plan.md` "v2.3.0 History index". Reports, records,
+the sidecar schema and the control protocol are unchanged from 2.2.0.
+
+### Changed
+
+- **The app reads your saved reports once, in the background.** The Plan
+  page, Analysis → Cables, the Cable ID suggestions, a retest's earlier
+  attempts, the session timeline, the summary sheet's "Next" and the
+  handover pack now share one index of the Reports folder. It re-reads only
+  reports that changed and does that off the window's thread, so a big
+  Reports folder (or one on a network share) no longer stalls a page.
+- **A run you just saved counts at once.** The save hands its record to the
+  index directly, so starting the next run, "Next" and the session timeline
+  no longer re-read the folder first.
+- **The Plan page says "Reading the saved reports…"** until the first read
+  after launch lands, instead of showing every test point as not run; if
+  the reports can't be read, Plan and Analysis say so.
+- **Analysis → Runs follows the same index** and its "newest" rule, and
+  shows a report again when its record is re-saved.
+
+### Fixed
+
+- **Renaming a campaign no longer loses its status.** The Plan page matched
+  saved runs to a campaign by name only; it now uses the campaign's id when
+  the run has one, as cable history and the handover pack already did.
+- **Re-saving an old run no longer makes it the newest result.** Status
+  picked the newest *file*; every page now orders runs by when they started
+  (the file time only for a record that has no start time), so an old FAIL
+  saved again can't hide the PASS that came after it.
+- **An anonymised copy no longer counts as a test point's result** on the
+  Plan page (history and the handover pack already skipped it).
+- The Cable ID suggestions now read each report through the same size cap
+  as every other record reader.
+- **One damaged report can no longer blank the Plan page, Cables and the
+  suggestions.** A record with an impossible packet count or file date is
+  now read (or listed as unreadable) on its own, and the rest still show.
+- **A Reports folder on a network share that drops for a moment** keeps
+  what the app already knew instead of showing every test point as not run.
+- **The handover pack lists why a record was left out** (for example "not
+  JSON" or "access denied"), and leaves out a run folder that is a link to
+  somewhere else.
+- A record that couldn't be read once (a sharing lock, say) is read again
+  the next time a pack is built.
+- A record saved twice before run ids existed now counts once, and start
+  times written with a time zone are compared in local time.
+- **A handover pack built while the Reports folder can't be read** says so
+  in its README.
+
 ## [2.2.0] - 2026-10-29
 
 Accounts. Scope: `plan.md` "v2.2.0 Accounts"; decision: ADR 0002. Reports,
@@ -1941,7 +1991,8 @@ this version — see the first entry.
   (the documented default), instead of also turning PDF and TXT on.
 - The Analysis Diff tab's hint banner is now readable on the Light theme.
 
-[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v2.2.0...HEAD
+[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v2.3.0...HEAD
+[2.3.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.3.0
 [2.2.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.2.0
 [2.1.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.1.0
 [2.0.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.0.0
