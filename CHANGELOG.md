@@ -6,6 +6,59 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.0] - 2026-10-29
+
+Accounts. Scope: `plan.md` "v2.2.0 Accounts"; decision: ADR 0002. Reports,
+records and the control protocol are unchanged from 2.1.0. This release
+changes how you sign in to your LinkProven account, in the app and on the
+portal.
+
+### Added
+
+- **Sign in with your email and a password**, in the Windows app (Save
+  Options → Cloud sync) and on the portal. No more waiting for a code every
+  time.
+- **Create an account** on the portal: your name, email and a password (at
+  least 10 characters), then the 6-digit code we email you. In the app,
+  **Create account…** opens that page.
+- **Forgot password?** emails a 6-digit code to set a new one. If you signed
+  in with emailed codes before, use it once to set your first password.
+- **Continue with Google / Continue with Apple** on the portal and in the
+  app. Google's sign-in screen names LinkProven (brand verified).
+- **Your name** shows on the Account page (edit it there) and next to your
+  email in team member lists. **Change password** is on the Account page.
+- **Changing your password from a session older than a day asks for a code**
+  we email you first, so a borrowed or forgotten session cannot quietly set a
+  new password.
+
+### Changed
+
+- Every LinkProven email now carries a code to type and **no link**. Company
+  mail systems (Microsoft Safe Links, Cisco) open links before you do, which
+  used up one-time links. A work address can hold mail from a new sender for
+  a few minutes: the portal says so, and Help says what to ask IT.
+- Deleting your account after more than 10 minutes signed in asks for your
+  password. An account without one gets an emailed code instead.
+- Passwords that have appeared in a data breach are refused, with a message
+  that says so.
+- Changing your password signs you out everywhere else, the Windows app
+  included: sign in there again with the new password. The portal says so.
+- The Google and Apple buttons follow what your account's server offers, so
+  they appear or go without a new app version.
+
+### Fixed
+
+- **Continue with Google / Apple in the Windows app** now opens your browser.
+  Windows dropped the sign-in address, so these buttons never worked before.
+- A Google or Apple sign-in you cancelled can no longer sign you in a moment
+  later.
+- The portal says "Could not reach LinkProven" when you are offline, instead
+  of showing a technical error.
+- Leaving or reloading the portal halfway through a password reset no longer
+  leaves you signed in without a new password.
+- A deleted account trying to sign in is told it was deleted, and how to undo
+  it within 30 days.
+
 ## [2.1.0] - 2026-10-28
 
 Portal hardening. Scope: `plan.md` "v2.1.0 Portal hardening". The Windows
@@ -1888,7 +1941,8 @@ this version — see the first entry.
   (the documented default), instead of also turning PDF and TXT on.
 - The Analysis Diff tab's hint banner is now readable on the Light theme.
 
-[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v2.1.0...HEAD
+[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v2.2.0...HEAD
+[2.2.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.2.0
 [2.1.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.1.0
 [2.0.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.0.0
 [1.7.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v1.7.0
