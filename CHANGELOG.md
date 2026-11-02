@@ -6,6 +6,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.2] - 2026-11-02
+
+Fixes saving reports in the installed app. Update if you use 1.2.0 or later.
+Reports, records, the sidecar schema and the control protocol are unchanged from
+2.3.0.
+
+### Fixed
+
+- **The installed app can save reports again.** In every packaged build from
+  1.2.0 to 2.3.0, saving a sweep or session with "Integrity QR + hash on the
+  cover" on (the default) and Word or PDF ticked ended in "Not saved: No module
+  named 'reportlab.graphics.barcode.code128'". Only the `.json` record was
+  written, so no documents appeared and nothing uploaded. Multi-Client reports
+  and Analysis exports were not affected.
+
+### Changed
+
+- **Every build now has to prove it can save.** The build runs the packaged app
+  with `--self-test-save`, which runs the real save code on made-up data: sweep,
+  session, Multi-Client, anonymised copy, soak summary and an Analysis comparison
+  with its charts. It also looks inside the files for the QR, the logo, the Inter
+  font and placeholder charts. A bundle that fails is moved aside, so it can't be
+  zipped for the updater.
+
+## [2.3.1] - 2026-11-02
+
+Local build only; never published. The save fix and the first version of the
+build check, both described under 2.3.2.
+
 ## [2.3.0] - 2026-10-29
 
 History index. Scope: `plan.md` "v2.3.0 History index". Reports, records,
@@ -1991,7 +2020,8 @@ this version — see the first entry.
   (the documented default), instead of also turning PDF and TXT on.
 - The Analysis Diff tab's hint banner is now readable on the Light theme.
 
-[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v2.3.0...HEAD
+[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v2.3.2...HEAD
+[2.3.2]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.3.2
 [2.3.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.3.0
 [2.2.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.2.0
 [2.1.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.1.0
