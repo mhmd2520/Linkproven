@@ -6,6 +6,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.3] - 2026-11-02
+
+Reports, records, the sidecar schema and the control protocol are unchanged from
+2.3.2.
+
+### Fixed
+
+- **One report that can't be written no longer stops the rest.** A sweep or
+  session used to stop at the first document that failed, losing every format
+  after it. Now the others are still written, and the screens say what saved and
+  what didn't.
+- **A partly saved run still uploads.** What saved reaches the portal, and saving
+  the run again later can add a missing document. When only the `.json` record
+  survives, the screens now say no report document was saved, instead of "Saved 1
+  file(s)". When nothing survives, they still say "Not saved".
+- **A Multi-Client run keeps what it can.** The `.json` used to be written last,
+  so one failed document lost the measurement itself. Now a failed document or a
+  failed `.json` costs that file only.
+- **A hands-free Multi-Client run isn't held by a partial save.** It shows a
+  warning with Open folder instead of a dialog waiting to be dismissed.
+- **A session keeps going past a failure.** With "one report per test point" on,
+  each test point is still saved if another test point or the session report
+  fails, and the message names what failed. One test point's certificate failing
+  no longer costs the certificates after it.
+- **A half-written file never takes a report's name.** Each file is written under
+  a temporary name and renamed once finished, so a failed Word or Excel report
+  can't be left in the folder or listed as saved.
+- **No room in the temp folder no longer loses the whole report.** Documents with
+  no figures to draw still save, and the run still uploads.
+- **Runs with photos name the right folder.** Messages, Open folder and the soak
+  summary's Report column pointed at the run's `Photos` subfolder. This older bug
+  was also in 2.3.2.
+- **An incomplete anonymised copy says so** after its warning, instead of
+  announcing that the copy was written.
+- **A soak round with a missing document** reads "PASS (report incomplete: ...)"
+  in the summary, so it can't be taken for a problem with the test.
+- **Long paths and errors stay on the finish sheet.** Very long errors are also
+  cut short on screen; the whole text is in the app log.
+
 ## [2.3.2] - 2026-11-02
 
 Fixes saving reports in the installed app. Update if you use 1.2.0 or later.
@@ -2020,7 +2059,8 @@ this version — see the first entry.
   (the documented default), instead of also turning PDF and TXT on.
 - The Analysis Diff tab's hint banner is now readable on the Light theme.
 
-[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v2.3.2...HEAD
+[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v2.3.3...HEAD
+[2.3.3]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.3.3
 [2.3.2]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.3.2
 [2.3.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.3.0
 [2.2.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.2.0
