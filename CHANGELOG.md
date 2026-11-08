@@ -6,6 +6,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.4] - 2026-11-08
+
+Reports, records, the sidecar schema and the control protocol are unchanged from
+2.3.3.
+
+### Fixed
+
+- **A run's `.json` record and a soak summary are written more safely.** The app
+  writes each one through the file it just created, and never opens that file
+  again by name, so nothing can swap it in between. LinkProven runs as
+  administrator, which makes this matter.
+- **A session certificate that can't be written is named cleanly.** When the run
+  has no test point, the message no longer starts with a stray space.
+- **Leftovers are logged.** If a temporary file can't be deleted after a failed
+  report write, the log names it so it can be removed by hand. A failed
+  anonymised copy now records its full error in the log too.
+
 ## [2.3.3] - 2026-11-02
 
 Reports, records, the sidecar schema and the control protocol are unchanged from
@@ -2059,7 +2076,8 @@ this version — see the first entry.
   (the documented default), instead of also turning PDF and TXT on.
 - The Analysis Diff tab's hint banner is now readable on the Light theme.
 
-[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v2.3.3...HEAD
+[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v2.3.4...HEAD
+[2.3.4]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.3.4
 [2.3.3]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.3.3
 [2.3.2]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.3.2
 [2.3.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.3.0
