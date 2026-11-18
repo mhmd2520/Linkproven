@@ -6,6 +6,138 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.5] - 2026-11-18
+
+The sidecar schema and the control protocol are unchanged from 2.3.4.
+
+### Fixed
+
+- **Numbers no longer wrap in report tables.** The cover's Table-2 printed a
+  loss of `0.000` as "0.00" over "0" in the PDF. The cover's Table-2 and the
+  cable-validation tables (PDF and Word), and the PDF's other auto-sized
+  tables, now give each column at least the width of its longest word.
+- **"Use last run" says where an earlier run comes from.** After a restart there
+  is no last run, so the button is now greyed out until a sweep finishes, and it
+  points at **Load from report…** instead. Setting a baseline is confirmed on
+  screen. If the last sweep was recorded as one of the campaign's test points,
+  you are asked whether it really was the bench run.
+- **An empty field no longer leaves a double separator in a report name.** With
+  no train set, `Test2-{train}-{tp}` now gives `Test2-TP3`, not `Test2--TP3`.
+- **A campaign name with " - " gets a clean file name.** "A - B" is saved as
+  `A-B.json`, not `A---B.json`. Campaigns saved under the old name are still
+  found, and two campaigns never share a file.
+- **The Plan page no longer overwrites changes made to the campaign file outside
+  LinkProven.** It reloads the file when you open the page. If you edit on the
+  page after the file has changed, it asks whether to reload the file or
+  overwrite it. A file that can't be read leaves the campaign active.
+- **Save Options shows the file name a save will use.** When the campaign's
+  report template names a pattern, the page says so, and says which pattern wins.
+
+From a whole-app review:
+
+- **Sweeps and sessions**
+  - The Server laptop now stays awake for a whole sweep, so it can't fall asleep
+    mid-session and read on the Client as a disconnect.
+  - The verdict shown between test points now matches the saved session report.
+    Before, a link drop could read PASS on screen and FAIL in the report.
+  - A case whose iperf3 client never connects no longer waits an extra 10 s, on
+    the Server or in Loopback.
+  - A Client that vanishes without closing the link no longer holds the Server
+    forever.
+  - The Server's "Cases received" count no longer counts a retried case twice.
+  - A low-battery warning is listed once per session, not once per test point.
+- **Saved reports and history**
+  - Each test point of a session saved with "Save each test point" now counts as
+    one attempt, not two. Before, the Plan page showed "attempt 2" and a retest's
+    report named attempts that never happened.
+  - A run copied into the Reports folder, or a record edited in place, now
+    appears without restarting the app.
+  - A save into a newly chosen destination is no longer dropped from the list.
+  - Runs that leave the Reports folder also leave the Analysis list.
+  - One unreadable record no longer empties the Analysis list.
+  - The Analysis export no longer fails at its default settings. Before, it
+    tried to write a CSV it can't make.
+  - The export now includes only the runs the filter shows, and says when
+    "Only runs with failed cases" is on.
+  - If one file of an export or a soak summary fails, the rest are still written.
+  - Issuing a certificate later no longer makes untouched reports verify as
+    altered.
+  - A test point retried within a session keeps both verdicts on the cover and
+    in its QR code.
+  - The Excel "Run info" sheet now states the real number of cases, not "all 20".
+- **Numbers**
+  - Loss read from iperf3's text output is now worked out from the packet counts.
+    Before, it used iperf3's rounded percentage, so a 1.04 % loss could read
+    MARGINAL against a 1 % limit.
+  - A TCP Multi-Client run no longer shows jitter and loss as 0.000 / 0.00. It
+    did not measure them.
+  - A case that received nothing is no longer drawn as a clean 0 % cell.
+  - NIC error counters that were not recorded now read "not recorded", not
+    0 errors in green.
+  - Analysis Stats shows sub-0.01 % loss as the reports do. Old records'
+    missing values no longer count as "better".
+  - The threshold line is hidden when the runs offer different rates at the
+    same case number.
+  - The Multi-Client load figures for TCP now add up, and UDP payloads above
+    1472 B count their IP fragments.
+- **Setup, Plan and Multi-Client**
+  - Setup fixes, Fix all and Reset now run without freezing the window, and
+    refuse to run while a test is running.
+  - A Reset whose network restore fails keeps the markers that let the next
+    launch retry the restore.
+  - A cable pulled during a check, or while the Setup tab was hidden, now
+    triggers a re-check.
+  - One check that crashes now shows a FAIL row instead of leaving the tab stuck
+    on "Running checks…".
+  - Firewall rules are now detected, and removed by Reset, on non-English Windows.
+  - The Ping summary now reads non-English Windows output.
+  - The close-time DHCP revert now undoes an address LinkProven set on an
+    override subnet or on a second Ethernet adapter.
+  - A blank or repeated test-point label on the Plan page is refused, instead of
+    the row being dropped from the saved plan.
+  - Check connectivity and a Multi-Client run no longer run at the same time.
+  - A Multi-Client run against the test subnet is blocked while Wi-Fi is on that
+    subnet, as a sweep is.
+  - The Distribution and extra ping destinations are now remembered.
+  - A screening that never connected now says "Could not run" instead of "Worth
+    a full sweep".
+- **Speed**
+  - Report charts are drawn once per save instead of three times.
+  - The first report of a session no longer freezes while the tool versions are
+    read.
+  - Anonymised copies, certificates, update installs and queuing past reports
+    for upload now run without freezing the window.
+  - Closing the app no longer re-reads every record.
+  - The Analysis and Save Options pages read the shared Reports index instead of
+    walking the folder themselves.
+- **Updates, cloud and safety**
+  - An update that finishes downloading during a sweep now waits for you to
+    press "Install now", instead of closing the app mid-run.
+  - The update check can no longer get stuck on "Checking for updates…".
+  - Sign-in no longer refreshes on every call on a laptop whose clock is wrong.
+  - Google and Apple sign-in buttons are asked for again if the first try was
+    offline.
+  - A stray keystroke in the agent token field no longer replaces the saved
+    token. A typed change is confirmed first.
+  - The Config page opens folders through the pinned Explorer.
+
+From the /finish review:
+
+- The NIC counters table no longer reads green when a case recorded no
+  counters at all. When some cases did not record an error counter but others
+  counted errors, it shows "≥ N" and fails, as criterion 4 does.
+- A user Stop on the Server no longer reads as a Client disconnect, with no
+  banner and no disconnect sound.
+- The Linux agent now notices a vanished Client within about 40 s, as the
+  Windows Server does, instead of after the 2-hour system default.
+- A campaign named with " - " keeps its own file when that file is renamed or
+  broken outside LinkProven. Renaming a campaign in its file to another
+  campaign's name no longer overwrites that campaign: the name is kept.
+- A fix or Reset started on the Server is refused if a Client starts a sweep
+  while its confirmation is open.
+- Closing the app while a fix, a save or an update is being prepared no longer
+  risks a crash: the work finishes first.
+
 ## [2.3.4] - 2026-11-08
 
 Reports, records, the sidecar schema and the control protocol are unchanged from
@@ -2076,7 +2208,8 @@ this version — see the first entry.
   (the documented default), instead of also turning PDF and TXT on.
 - The Analysis Diff tab's hint banner is now readable on the Light theme.
 
-[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v2.3.4...HEAD
+[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v2.3.5...HEAD
+[2.3.5]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.3.5
 [2.3.4]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.3.4
 [2.3.3]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.3.3
 [2.3.2]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.3.2
