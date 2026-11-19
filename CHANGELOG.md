@@ -6,6 +6,49 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.6] - 2026-11-19
+
+The sidecar schema and the control protocol are unchanged from 2.3.5. The
+items deferred at the 2.3.5 close-out:
+
+### Changed
+
+- **Campaign files keep the names they always had.** 2.3.5 saved a campaign
+  called "A - B" as `A-B.json`; 2.3.6 goes back to `A---B.json`, the name every
+  version before 2.3.5 used. Any file 2.3.5 wrote is moved back when
+  LinkProven starts (unless a file already has that name).
+
+### Fixed
+
+- **Renaming a campaign to a name that only differs in punctuation or case no
+  longer deletes it.** "Train #1" renamed to "Train 1" (or "unit 7" to
+  "Unit 7") saves to the same file, which the rename then deleted as the old
+  one.
+- **Updating the Server no longer closes it under a sweep.** Preparing an
+  update takes a few seconds, and a Client could start a sweep in that time;
+  the app then closed to install. The install now waits: press Install when
+  the sweep has finished, and the prepared update starts at once.
+- **The Server refuses a sweep while a Setup fix is running on it.** A Client
+  that connects while the Server is changing its network adapter is told
+  "The Server is busy" and can start again when the fix has finished. It is
+  shown as a refusal, not as a connection error, and a soak stops with that
+  reason. The other way round, the Server counts as busy from the moment a
+  Client connects, so a Setup fix, Reset or update can't start while the two
+  laptops are still handshaking.
+- **Analysis opens without a pause on a full Reports folder.** Eight or more
+  new reports are read in the background; a report saved during the session
+  still appears at once. The page no longer says "No reports yet" while they
+  load, and opening or closing the demo data doesn't wait for them.
+- **The Cloud panel no longer re-reads every queued upload each time it
+  repaints**, which it did after every upload.
+- **The Analysis Cables list catches up when you come back to the tab.** A
+  cable saved while the page was hidden only appeared after the next save.
+- **Editing a test point's label on the Plan page saves the campaign once**,
+  not twice.
+- **A report name with an empty field is built from the pattern itself.** The
+  result is unchanged ("Test2-{train}-{tp}" with no train gives "Test2-TP3");
+  a value with its own dashes or underscores is never trimmed.
+
 ## [2.3.5] - 2026-11-18
 
 The sidecar schema and the control protocol are unchanged from 2.3.4.
