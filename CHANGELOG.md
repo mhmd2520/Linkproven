@@ -6,6 +6,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.8] - 2026-11-19
+
+The sidecar schema (13) is unchanged, and so is the control protocol: the
+Client's FINISH may now carry an optional `stopped: true`. It is sent only to
+a 2.3.8 or newer Server; an older one sees the hang-up, as before.
+
+### Fixed
+
+- **A Stop pressed on the Client no longer looks like a lost connection on
+  the Server.** The Client now tells the Server it was stopped before it
+  hangs up, from the end of the handshake on, between cases or in the middle
+  of one, and so does closing the Client mid-run. The Server says "Stopped
+  by the Client", drops the unfinished case, ends it in the live view, and
+  raises no orange connection banner and no sound. A real drop still raises
+  the banner (a pulled cable also plays the disconnect sound). The phone
+  Server reports the same stopped finish.
+- **The stop is not lost on a Windows Server.** The Client keeps reading
+  until the Server has hung up (2 seconds at most) instead of closing at
+  once: closing under a message still coming in resets the connection, and
+  Windows then throws away the stop it had not read yet.
+
+### Internal
+
+- The control channel writes one message at a time, so the Client's Stop
+  (sent from the window) can never split a message the sweep is writing.
+- A Server starts each connection's counts from zero.
+
 ## [2.3.7] - 2026-11-19
 
 The sidecar schema (13) and the control protocol are unchanged from 2.3.6: a
@@ -2302,7 +2329,8 @@ this version — see the first entry.
   (the documented default), instead of also turning PDF and TXT on.
 - The Analysis Diff tab's hint banner is now readable on the Light theme.
 
-[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v2.3.7...HEAD
+[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v2.3.8...HEAD
+[2.3.8]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.3.8
 [2.3.7]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.3.7
 [2.3.6]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.3.6
 [2.3.5]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.3.5
