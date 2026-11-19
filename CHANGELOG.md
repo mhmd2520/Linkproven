@@ -6,6 +6,57 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.7] - 2026-11-19
+
+The sidecar schema (13) and the control protocol are unchanged from 2.3.6: a
+busy Server still answers HELLO with the ERROR code `busy`, now with a known
+reason in its message. The items deferred at the 2.3.6 close-out:
+
+### Changed
+
+- **One owner of the network adapter at a time.** A sweep, a Multi-Client
+  run, a screening run, a Setup fix, Reset and an update install now each
+  claim the test NIC, and only the one holding it can give it back. Before,
+  one tab finishing could clear another's hold: a Client connecting to a
+  Server laptop that was running a Multi-Client test released that test's
+  lock when it hung up.
+- **A busy Server says why.** A Client turned away now hears the reason: a
+  Setup fix is changing the Server laptop's network adapter, it is installing
+  an update, or it is running its own test. Only LinkProven's own reasons are
+  repeated, never text from the other end.
+- **Installing an update on a Server no longer waits for a later click.** The
+  install takes the network adapter first, so a Client connecting while the
+  update prepares is refused with that reason. If a test is already running,
+  the downloaded update is kept and Install says what it is waiting for.
+- **The Server shows "Client connected" only once the Client has passed the
+  handshake.** A silent connection (a port probe) or a refused Client no
+  longer shows as connected and then disconnected. The phone Server does the
+  same.
+- **Filename patterns: only `{date}`, `{time}`, `{tp}`, `{campaign}`,
+  `{train}` and `{cable}` are special.** A `:format` or `!conversion` inside
+  one is ignored, and `{{` / `}}` are a single `{` / `}` in every pattern (a
+  pattern with an unknown token used to keep them doubled).
+
+### Fixed
+
+- **Cloud uploads read the waiting list fresh.** Only the Cloud panel's
+  summary line is cached now, so an upload or backfill never works from a
+  cached copy of the list (one could be up to 30 s old on a coarse-clock
+  disk).
+- **Fix all keeps the network adapter until its last fix is done.** It let go
+  between fixes, so a Client could connect to the Server in between and the
+  remaining fixes failed, leaving the laptop half-fixed.
+- **A Setup fix or Reset waits for the laptop readiness fixes.** Either could
+  start while those were restarting the network adapter.
+- **Restarting the Server listener no longer upsets the new session.** A slow
+  old listener's late "disconnected" could end the new session's keep-awake
+  hold.
+
+### Internal
+
+- One modal busy loop behind both background helpers, one loop for every
+  report document save, and the outbox read says when it skipped a busy note.
+
 ## [2.3.6] - 2026-11-19
 
 The sidecar schema and the control protocol are unchanged from 2.3.5. The
@@ -2251,7 +2302,9 @@ this version — see the first entry.
   (the documented default), instead of also turning PDF and TXT on.
 - The Analysis Diff tab's hint banner is now readable on the Light theme.
 
-[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v2.3.5...HEAD
+[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v2.3.7...HEAD
+[2.3.7]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.3.7
+[2.3.6]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.3.6
 [2.3.5]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.3.5
 [2.3.4]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.3.4
 [2.3.3]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.3.3
