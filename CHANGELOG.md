@@ -6,6 +6,79 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.9] - 2026-11-20
+
+A whole-application security and correctness review (not just the latest
+changes), plus a dependency audit. The sidecar schema (13) and the control
+protocol are unchanged.
+
+### Security
+
+- **The Server window no longer renders text from an unauthenticated
+  Client.** A sweep id containing markup was shown as rich text in the
+  Server's title; it is now plain text, and a sweep id keeps only letters,
+  digits and `._:-`. The phone Server filters it the same way.
+- **LinkProven's PowerShell calls load only Windows' own modules.** A module
+  placed in the user's Documents folder could otherwise run with
+  administrator rights the next time LinkProven read the network adapter.
+- **Qt plugin-path settings from the user's environment are ignored** in the
+  installed app, so a planted plugin can't load into it.
+- **Updates download inside the install folder** (`_update\download`), which
+  only administrators can change, instead of the user's AppData folder.
+- **Test-only folder settings for photos and campaigns are ignored** in the
+  installed app.
+- **The team invite email uses nodemailer 10.6.0** (was 7.0.13, which has
+  published advisories), and every Edge Function dependency is pinned to an
+  exact version.
+- **Only workspace owners can delete a campaign or remove a laptop** in the
+  cloud workspace. Either delete strips that link from every synced run, so
+  it now needs the same role as deleting a run.
+- **The portal always uses HTTPS** (HSTS), and its share dialog states that
+  the shared PDF and Word reports include IP addresses and computer names.
+
+### Fixed
+
+- **A case is no longer PASS when one of its reference limits could not be
+  checked** (for example latency with ICMP blocked). It reads "not checked"
+  until every limit that applies could be judged. Jitter and UDP loss limits no
+  longer apply to a TCP run.
+- **NIC power saving that is on no longer reads "Disabled" on non-English
+  Windows.** The readiness check uses the driver's own setting, not the
+  translated text, and says it can't tell rather than guessing.
+- **Importing a config file that is not UTF-8 shows the import error** instead
+  of crashing, and a UTF-8 file saved with a byte-order mark (PowerShell,
+  Notepad) imports.
+- **A finished update's download is removed at the next start.** Versions
+  2.3.8 and older downloaded to `%APPDATA%\LinkProven\update`; LinkProven no
+  longer touches that folder, and you can delete it.
+- **Closing or switching roles right after a sweep stopped** waits (up to 8
+  seconds) for the sweep to finish shutting down.
+- **The Detail and per-segment sheets of the Excel report format numbers as the
+  Summary sheet does**, so one value no longer reads 10 on one sheet and 10.00
+  on another.
+- **A save that wrote no report document says what it did write** (data,
+  photos or charts) and in which folder.
+- **A report with a long name close to Windows' 260-character path limit
+  saves** (the temporary file now has a fixed 15-character name instead of the
+  report's name plus 13 characters).
+- Hint text follows the Light / Dark / Low light theme, and Config's Apply
+  button uses the app's button style.
+
+### Internal
+
+- New `tools/audit_dependencies.py` checks every shipped dependency set
+  against the OSV vulnerability database (through Google's `osv-scanner` when
+  it is installed). It separates what the app ships from developer tools, and
+  a failed or partial read counts as "not checked", never as clean. `/finish`
+  and `/publish` now run it, and `/finish` adds a periodic whole-repository
+  security review.
+- Reference verdicts record the judging rules they were made by, so a run
+  saved before 2.3.9 keeps its verdict in Analysis and when its report is
+  re-issued. Each report type now states which metrics apply to it.
+- Help and website screenshots are re-shot. The header's network adapter
+  and the Multi-Client core count are now fixed demo values rather than
+  this PC's, and two captures of the same code match byte for byte again.
+
 ## [2.3.8] - 2026-11-19
 
 The sidecar schema (13) is unchanged, and so is the control protocol: the
@@ -2329,7 +2402,8 @@ this version — see the first entry.
   (the documented default), instead of also turning PDF and TXT on.
 - The Analysis Diff tab's hint banner is now readable on the Light theme.
 
-[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v2.3.8...HEAD
+[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v2.3.9...HEAD
+[2.3.9]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.3.9
 [2.3.8]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.3.8
 [2.3.7]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.3.7
 [2.3.6]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.3.6
