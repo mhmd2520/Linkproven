@@ -6,6 +6,58 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.4.1] - 2026-11-21
+
+Exact pairing between a test-point session and the reports of its test
+points, and the Server's serial number is now opt-in. The control protocol
+is unchanged, and the sidecar keeps schema 13 (see below).
+
+### Security
+
+- **A Windows Server no longer sends its serial number to every Client.**
+  With cable validation on, a Client asks the Server to describe its laptop
+  for the report. The Windows Server has no login, so any device on the test
+  network that connected could read the laptop's serial number this way. It
+  is now sent only when **Send this laptop's serial number to the Client** is
+  ticked on the Server page (off by default). Make, model, network card and
+  link state still reach every Client's report. The setting applies to the
+  next Client without restarting the listener. The Linux agent and the phone
+  Server also withhold the serial, except from a Client that proved their
+  agent token.
+
+### Changed
+
+- **A session now records each test point's own run id.** With "Also save
+  each segment as its own report" (the default), the session's `.json` lists,
+  for every test point, the run id its own report carries. The run history,
+  campaign status and cable history use it to count each test point once.
+  Before this, the pairing went by campaign, test point and exact start time,
+  so a session whose test points had no label counted each one twice, and so
+  did a label corrected in one file only. Saving the last test point again
+  with **Save report now** stays paired, even with "Also save each segment"
+  off. Reports saved before 2.4.1 still pair the old way.
+- **"Save report now" after a session files the last test point under its
+  own label and cable**, not whatever the Run tab's Test point field held.
+- A re-issued report keeps the run ids, and an anonymised copy drops them, as
+  it already drops the run's own id.
+- The sidecar's `schema_version` stays **13**. The new field is optional, so
+  older versions of LinkProven read the new files unchanged. Cloud sync holds
+  back a schema newer than 13 until the server is updated, so a new number
+  would have held every new run in the outbox. The cloud doesn't use the run
+  ids yet, so the portal dashboard still counts a session and its test points
+  separately.
+
+### Fixed
+
+- **A damaged session report no longer shifts its test points.** If one
+  entry in a session's list of test points couldn't be read, the history
+  showed every later test point with the next one's results. Each point is
+  now read from its own entry.
+
+## [2.4.0] - 2026-11-20
+
+Local build only; never published. Its changes are described under 2.4.1.
+
 ## [2.3.9] - 2026-11-20
 
 A whole-application security and correctness review (not just the latest
@@ -2402,7 +2454,8 @@ this version — see the first entry.
   (the documented default), instead of also turning PDF and TXT on.
 - The Analysis Diff tab's hint banner is now readable on the Light theme.
 
-[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v2.3.9...HEAD
+[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v2.4.1...HEAD
+[2.4.1]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.4.1
 [2.3.9]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.3.9
 [2.3.8]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.3.8
 [2.3.7]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.3.7
