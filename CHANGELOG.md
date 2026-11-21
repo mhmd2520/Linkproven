@@ -6,6 +6,68 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.5.0] - 2026-11-21
+
+Both ends of a Linux agent connection now prove the agent token (ADR 0003).
+Only set-ups that use the agent token are affected: without a token the
+control channel is exactly as before, byte for byte. Reports, sidecars
+(schema 13) and the cloud are unchanged.
+
+### Security
+
+- **The Linux agent proves the token to this laptop.** Before, only the
+  laptop proved it, so anything answering on the server's address could run
+  the whole sweep and send back made-up Server-side results (loss, NIC
+  counters, the server's own details) that went into the report. Now the
+  agent proves the token first, and LinkProven stops with its own message
+  before a case runs if the proof is wrong or missing. The proof also covers
+  the laptop's opening message, so nothing on the way can quietly switch
+  off the Server-side evidence a sweep asks for.
+- **Every message after the token check is signed.** Each control message
+  carries a code made from the token and this connection only. A message
+  that was changed, replayed or reordered on the way ends the sweep at once,
+  and both ends say it was tampered with (never "connection lost"), so no
+  one on the test network can change a result in transit. Results are not
+  encrypted.
+- **A recorded sign-in to the agent can't be replayed.** The agent used to
+  remember used codes only until it restarted, and a fake server could
+  collect a fresh code from a laptop and replay it straight away. Each
+  connection now has to answer a fresh challenge from the agent, and the
+  agent keeps no list to lose.
+- **The web portal sends a Content-Security-Policy.** It names everything
+  the portal may load: its own files, Flutter's renderer and fonts from
+  Google's CDN, and the LinkProven cloud. A script injected from anywhere
+  else would not run. It ran in report-only mode on the live portal first;
+  a signed-in session logged no violation, so it is now enforced.
+
+### Changed
+
+- **Update the Linux agent together with LinkProven.** Once a token is in
+  use, the agent and every laptop that uses it must all be on 2.5.0 or
+  later: an older laptop and a 2.5.0 agent refuse each other. There is no
+  fallback to the old check, because a fallback would let the old attacks
+  back in. After updating, run the Linux server set-up (Setup →
+  Server is Linux…) again to update the agent. A laptop with a token saved
+  also refuses a Server that can't prove it, including a Windows LinkProven
+  Server at the same address: clear the token in that dialog to use one. Both
+  cases say so in plain words when you connect.
+- The phone app's Server code follows the same rules, ready for when it
+  offers a token.
+
+### Fixed
+
+- **The Windows Server never listens on every network.** A Server address
+  of `0.0.0.0` (any network) is refused with a message instead of opening
+  the control port to the whole LAN, as the Linux agent already did.
+- **Error banners and the Multi-Client PDF never treat text as markup.** An
+  iperf3 error message containing `<` could stop a Multi-Client PDF from
+  saving; the app-wide warning banner now always shows plain text.
+- **A malformed number from the Server no longer loses the sweep.** A
+  number too long or too large to read in a Server's reply (for example
+  `1e999` packets) used to stop the sweep and throw away every finished
+  case. Now that reply is treated as a bad message and the cases already
+  measured are kept.
+
 ## [2.4.2] - 2026-11-21
 
 A build-security patch, plus the cloud's half of 2.4.1's session pairing.
@@ -2482,7 +2544,8 @@ this version — see the first entry.
   (the documented default), instead of also turning PDF and TXT on.
 - The Analysis Diff tab's hint banner is now readable on the Light theme.
 
-[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v2.4.2...HEAD
+[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v2.5.0...HEAD
+[2.5.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.5.0
 [2.4.2]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.4.2
 [2.4.1]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.4.1
 [2.3.9]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.3.9
