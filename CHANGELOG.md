@@ -6,6 +6,50 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.5.1] - 2026-11-21
+
+A Server no longer waits for ever on a Client that connects and then goes
+quiet. Reports, sidecars (schema 13) and the control channel's messages are
+unchanged; this release also lists two cloud fixes that went live today.
+
+### Security
+
+- **A quiet Client no longer holds the Server.** Anything that could reach the
+  Server could connect, say hello and then send nothing, and the Server (on
+  Windows, also its test network adapter) stayed taken until someone stopped
+  it, so the real Client was told it was busy. Now the Server lets a Client
+  go after 3 minutes without a step of the sweep, says so in its window, and
+  is free for the next one at once. A real Client is never that quiet: each
+  test point is its own connection, and moving the cable between points
+  happens with no connection open. The Linux agent does the same. Only real
+  steps count: a heartbeat, a repeated sweep start or a malformed case does
+  not keep a Client connected. This stops a Client that goes quiet; what
+  keeps other devices off the Server is the agent token with `--allow-from`.
+- **The Server only runs case lengths the Config page allows (1 s to 1 h).**
+  The Client names each case's length, and a case keeps the Server until it
+  ends, so a made-up length of years held it just the same; a big enough one
+  could also leave a stray iperf3 server running. Such a case is now refused.
+- **A Client the Server lets go is told why, when the message reaches it.**
+  If it ever happens mid-sweep, the Server window reads it as a sweep cut
+  short (with the disconnect sound) rather than as housekeeping, and a
+  Client that receives the reason stops at once and shows it.
+- **Cloud: one team member can no longer hide another's test point.** In a
+  team workspace a session's test point is counted once when its own report
+  is also uploaded. Before, any sweep with the same id counted as that
+  report, so a member could upload a fake sweep that hid a colleague's FAIL
+  from the campaign status, the Dashboard and the campaign trends, and kept
+  the real report from ever uploading. Now the two are paired only when the
+  same account uploaded both, for the same campaign and test point, and the
+  cloud refuses a sweep that reuses a test point id from someone else's
+  session. Cloud-only: the desktop app is unchanged.
+- **Cloud: only the uploader or a workspace owner can re-save a run.** Saving
+  a run again (corrected details, another report format) adds a new version
+  in the cloud. Before, any team member could re-upload a colleague's run
+  with the technician, customer or serial number edited, and that version
+  became the one everyone saw (the results themselves could never change).
+  Now the cloud accepts a re-save only from the member who uploaded the run
+  or from a workspace owner. Cloud-only: the desktop app is unchanged.
+
 ## [2.5.0] - 2026-11-21
 
 Both ends of a Linux agent connection now prove the agent token (ADR 0003).
@@ -2544,7 +2588,8 @@ this version — see the first entry.
   (the documented default), instead of also turning PDF and TXT on.
 - The Analysis Diff tab's hint banner is now readable on the Light theme.
 
-[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v2.5.0...HEAD
+[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v2.5.1...HEAD
+[2.5.1]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.5.1
 [2.5.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.5.0
 [2.4.2]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.4.2
 [2.4.1]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.4.1
