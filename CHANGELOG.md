@@ -6,6 +6,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.4.2] - 2026-11-21
+
+A build-security patch, plus the cloud's half of 2.4.1's session pairing.
+Nothing changes in how the app runs or what its reports say. The sidecar
+keeps schema 13.
+
+### Security
+
+- **Every package inside the app is now pinned by its SHA-256 at build
+  time.** The release build used to take PyInstaller and every library it
+  bundles (Qt, matplotlib, reportlab, ...) from a development environment
+  installed without fixed versions. It now builds from its own environment,
+  installed only from a list of exact versions and file hashes, from
+  ready-made packages (nothing is compiled), and checked for completeness.
+  A package that changed on the download server cannot reach a release. The
+  pinned list is also checked against known vulnerabilities before every
+  release (none found).
+
+### Changed
+
+- **The cloud counts a session's test point once.** The portal's dashboard,
+  campaign status and campaign trends now pair each test point of a session
+  with that point's own report (the run id 2.4.1 records), so a three-point
+  session saved with "Also save each segment as its own report" counts as
+  three runs, not four. This is live on the cloud for every app since 2.4.1;
+  sessions saved by older versions are counted as before. The app's own
+  index of a run now carries each test point's run id the same way.
+
 ## [2.4.1] - 2026-11-21
 
 Exact pairing between a test-point session and the reports of its test
@@ -2454,7 +2482,8 @@ this version — see the first entry.
   (the documented default), instead of also turning PDF and TXT on.
 - The Analysis Diff tab's hint banner is now readable on the Light theme.
 
-[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v2.4.1...HEAD
+[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v2.4.2...HEAD
+[2.4.2]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.4.2
 [2.4.1]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.4.1
 [2.3.9]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.3.9
 [2.3.8]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.3.8
