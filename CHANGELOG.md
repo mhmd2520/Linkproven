@@ -6,6 +6,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.6.1] - 2026-11-22
+
+Three follow-ups from the 2.6.0 security review. Reports, sidecars (schema 13)
+and the control channel's messages are unchanged.
+
+### Security
+
+- **The Linux agent is checked against a hash built into the app.** The
+  set-up script used to check the downloaded `linkproven-server-<ver>.pyz`
+  only against a `.sha256` file from the same release. A published release
+  can no longer be changed, but a release still being prepared, or a test
+  build ahead of the public release, had nothing else to go on. Each build
+  of LinkProven now carries the agent's SHA-256 itself (the archive is built
+  reproducibly), and both the pasted commands and the set-up script check
+  against it. The release's `.sha256` is no longer downloaded, and a build
+  without the hash refuses to write the agent set-up rather than fall back. The
+  Help page, the Linux set-up dialog and the set-up step's description say
+  so. The agent archive is now stored uncompressed (about 400 KB), so every
+  Python builds exactly the same bytes, and a LinkProven build that lacks
+  the hash fails its own release self-test.
+- **A Server's laptop details can no longer break a Word or Excel save.** A
+  control character in a Server's hostname, driver or adapter text (for
+  example `SRV` followed by a `0x01` byte) made the Word and Excel reports
+  fail, and re-issuing failed too. These details are now cleaned of
+  characters Word and Excel refuse, and capped in length and number,
+  wherever they come in: from the Server, from this laptop's own adapter
+  query, and when an older saved run is read again. A saved `.json` is never
+  rewritten. A number too large to be real (such as `1e999`) in a saved
+  run's laptop details now costs that one field instead of the whole record.
+- **No text can break a Word or Excel report any more.** Behind that fix,
+  every Word and Excel writer now removes the characters those formats
+  refuse from whatever it is given (run details, names, notes, any field),
+  so one stray control character no longer costs the whole document. The
+  saved `.json`, CSV and text report keep the text as recorded.
+- **Development:** Dependabot proposes GitHub Action updates weekly as one
+  grouped pull request. (GitHub's "require actions pinned to a full SHA"
+  setting was tried and turned off again: a pinned third-party action that
+  uses another action by tag fails under it. Our own workflows stay pinned,
+  checked by a test.)
+
 ## [2.6.0] - 2026-11-22
 
 The Linux agent now refuses to start with a token but no Client address,
@@ -2677,7 +2717,8 @@ this version — see the first entry.
   (the documented default), instead of also turning PDF and TXT on.
 - The Analysis Diff tab's hint banner is now readable on the Light theme.
 
-[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v2.6.0...HEAD
+[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v2.6.1...HEAD
+[2.6.1]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.6.1
 [2.6.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.6.0
 [2.5.2]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.5.2
 [2.5.1]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.5.1
