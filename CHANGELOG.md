@@ -6,6 +6,68 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.6.0] - 2026-11-22
+
+The Linux agent now refuses to start with a token but no Client address,
+and this release closes the findings of a whole-app security review. Reports,
+sidecars (schema 13) and the control channel's messages are unchanged.
+
+### Security
+
+- **An agent with a token needs `--allow-from` to start.** 2.5.2 only
+  warned; the agent now prints what to add and exits with status 2.
+  `--check` still prints its whole report, with the reason under `errors`
+  (replacing 2.5.2's `warnings`), and exits 2. An agent started by hand
+  with a token needs `--allow-from <Client IP>` (repeat it for more than
+  one Client). An agent installed by an earlier set-up script keeps running
+  that earlier version, which still serves and only warns; the set-up
+  script for 2.6.0 already requires the Client address with a token, so
+  re-running it gives an agent that starts. There is no opt-out flag.
+- **`--token-file ""` no longer turns the token off.** An explicitly empty
+  path used to start the agent without a token; it is now refused like any
+  other unreadable token file.
+- **A number like `Infinity` from the other end no longer leaves iperf3
+  running.** A Client that sent `Infinity` or `1e400` where a case number
+  belonged made the Server stop the session with a raw error and left its
+  `iperf3 -s` (running as Administrator) listening on port 5201, so the next
+  Client's first case failed. `NaN` and `Infinity` are now refused as
+  invalid messages, a number too large to use reads as missing, and a case
+  that fails for any reason always stops its iperf3. The Client reads a
+  Server's numbers the same way.
+- **The Administrator copy ignores more of the user's environment.**
+  LinkProven runs elevated, but Windows builds that copy's environment from
+  the signed-in user's, which any program the user runs can change. As 2.3.9
+  did for Qt's variables, the installed app now ignores `OPENSSL_CONF` (and
+  OpenSSL's engine and module folders), `SSL_CERT_FILE` / `SSL_CERT_DIR`,
+  `MATPLOTLIBRC` and `CYGWIN`, and sets `SystemRoot`, `windir` and `ComSpec`
+  from Windows itself. Report charts never use TeX, whatever a
+  `matplotlibrc` says. Proxy settings still apply.
+- **Releases can no longer be changed once published.** The public
+  repository now has GitHub's immutable releases switched on, so a published
+  version's files (and the `.sha256` files the updater and the Linux setup
+  script check them against) and its tag cannot be replaced afterwards.
+- **Cloud storage is capped per account, in bytes.** Each workspace already
+  had a 5 GB limit, but one account can own 21 workspaces. An account's
+  uploads may now keep 10 GB in all, and its saves may add 256 MB of run
+  data to the database a day. Over a limit, an upload waits in the outbox
+  and is sent later, as for the other limits.
+
+### Changed
+
+- **A refused agent stays stopped instead of retrying.** The agent's
+  systemd unit now has `RestartPreventExitStatus=2`, so systemd leaves a
+  refused agent stopped (`systemctl status linkproven-server` shows why)
+  rather than restarting it every 2 s; a crash still restarts it. The same
+  holds for every other start-up configuration error (a bad address, no
+  iperf3, an unreadable token): fix it, then `sudo systemctl restart
+  linkproven-server`.
+- **Clearer agent start-up messages.** A missing Python package now names
+  the exact Python and `pip` that run the agent (the set-up script's own
+  `/opt/linkproven-server`; a plain `pip` installs somewhere it never looks),
+  and an incomplete download says so instead of asking for a package. The
+  set-up block's log command is `sudo journalctl`, which also works for a
+  user outside the journal group.
+
 ## [2.5.2] - 2026-11-22
 
 The Linux agent's token now always comes with the Client address. Reports,
@@ -2615,7 +2677,8 @@ this version — see the first entry.
   (the documented default), instead of also turning PDF and TXT on.
 - The Analysis Diff tab's hint banner is now readable on the Light theme.
 
-[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v2.5.2...HEAD
+[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v2.6.0...HEAD
+[2.6.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.6.0
 [2.5.2]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.5.2
 [2.5.1]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.5.1
 [2.5.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.5.0
