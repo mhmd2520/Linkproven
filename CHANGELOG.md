@@ -6,6 +6,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.5.2] - 2026-11-22
+
+The Linux agent's token now always comes with the Client address. Reports,
+sidecars (schema 13) and the control channel's messages are unchanged.
+
+### Security
+
+- **A token needs the Client address.** The agent token stops another
+  machine running a test, but an agent with a token and no Client address
+  (`--allow-from`) still let any device that could reach port 5202 keep it
+  busy by connecting over and over. The Linux server set-up now asks for the Client address
+  whenever *Require a token* is ticked, and builds no script without it.
+- **An agent started that way says so.** An agent with a token and no
+  `--allow-from` (started by hand, or set up by an earlier script with the
+  Client address cleared) still runs, but logs a warning at startup and
+  lists it under `warnings` in `--check`. A later release will refuse to
+  start that way: run the set-up script again with the Client address
+  filled in.
+
+### Fixed
+
+- **A refused set-up script no longer leaves a token behind.** On first
+  set-up the dialog makes a token; it was saved even when no script could
+  be built (an empty Client address, a bad Server address), and every later
+  sweep then sent it, so a Server without a token refused them. The token
+  is now saved only once the script is built.
+
 ## [2.5.1] - 2026-11-21
 
 A Server no longer waits for ever on a Client that connects and then goes
@@ -2588,7 +2615,8 @@ this version — see the first entry.
   (the documented default), instead of also turning PDF and TXT on.
 - The Analysis Diff tab's hint banner is now readable on the Light theme.
 
-[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v2.5.1...HEAD
+[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v2.5.2...HEAD
+[2.5.2]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.5.2
 [2.5.1]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.5.1
 [2.5.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.5.0
 [2.4.2]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.4.2
