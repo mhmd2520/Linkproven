@@ -6,6 +6,107 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.7.0] - 2026-11-23
+
+Closes every open item from the 2026-11-22 security review, the control
+channel's no-token follow-ups and the 2.5.0 architecture follow-ups. Sidecars
+stay at schema 13; a run without an agent token produces the same reports as
+2.6.1.
+
+### Added
+
+- **Reports say whether the Server proved itself.** When a sweep ran against
+  the Linux agent with a token and the agent proved it holds the token, the
+  saved `.json` records `"server_proven": true` and the Word, Excel, PDF and
+  text reports gain a "Server authentication" line. A multi-point session
+  reads "... at k of n test points". Without a token nothing changes. (The
+  CSV stays a data file and the cable certificate is unchanged.)
+- **"Server is the Linux agent" switch** on the Config page, per profile and
+  on by default. Turn it off to keep the saved token but run against a
+  Windows laptop or phone Server, which is then not sent the token.
+
+### Security
+
+- **The agent token is encrypted at rest** with Windows DPAPI (this Windows
+  account only) in the same setting. A plain token saved by 2.6.1 or earlier
+  is encrypted the first time it is read. A token that cannot be encrypted is
+  not saved; one that cannot be decrypted (another account, a copied
+  registry) reads as no token.
+- **Control channel limits.** A Server accepts at most 64 KiB per message
+  before the Client is admitted and 1 MiB after (was 16 MiB throughout); a
+  trickled message no longer costs time that grows with its length; a Client
+  that stops reading is let go after 30 s instead of blocking the Server; an
+  address refused by `--allow-from` is logged once in full, then counted
+  once a minute. A Client keeps at most 8 MiB of a Server's iperf3 result per
+  case (a larger one reads as not recorded, never as 0) and cleans the
+  Server's version text. The phone Server (Dart) follows, and also caps and
+  pauses its receive buffer.
+- **The elevated app trusts less of what other programs can write.** Frozen
+  builds ignore the template and baseline folder overrides; a stored report
+  logo is re-encoded on every read; `Photos\` and `Template\` folders (and
+  files in them) that are junctions or links are skipped; an imported
+  profile's network-share or device report folder is cleared with a reason;
+  the handover pack and the template library write to unpredictable
+  temporary names; the updater drops credential headers on a redirect to
+  another host.
+- **Portable copy notice.** A copy running from a folder that programs
+  without administrator rights can change shows a one-time notice steering
+  to the installer (the updater still uses the zip). The Download page labels
+  the zip "portable".
+- **Cloud.** Only a campaign's creator or a workspace owner can rename it or
+  change its plan through an upload (others' runs are still stored); each
+  stored run's data is checked against its saved `.json` file, and the portal
+  flags a mismatch; a file already in storage counts as stored only when its
+  uploader or the server's own hash check vouches for it; the desktop reads
+  each outbox file through one checked handle; invite mail has per-account
+  and per-workspace daily caps and defangs links in workspace names; a share
+  link's token is sent in the request body; member names are cleaned on the
+  server; member changes check the caller's role before taking a lock.
+- **Build and site.** The fping source and every bundled tool binary are
+  checked against committed hashes, and the build refuses Python older than
+  3.12.4; the Portal workflows install Flutter from a hash-checked download
+  instead of a third-party action; deploys run only from `main`, and
+  workflow checkouts keep no credentials; the website sends a
+  Content-Security-Policy; the public export checks its destination's real
+  path and remote and scans for more secret formats.
+- **Found by the release review (whole-app security pass).**
+  - A Server no longer trusts the numbers a Client sends: an absurd sweep size
+    used to overflow the Windows Server's countdown and show an error dialog
+    every quarter second. A rogue Server's oversized or deeply nested iperf3
+    result now costs only that case's counts (read as not recorded), never the
+    sweep or the saved reports. The Client reads the Server's first reply under
+    a 1 MiB limit, and the phone Server stops iperf on any error.
+  - The elevated app no longer passes .NET profiler settings from the user's
+    environment to PowerShell, finds the AppData folder through Windows rather
+    than an environment variable, and refuses its data, log and cache folders
+    (and a report's image folder) when any part of the path is a link. The
+    handover pack reads each file through one checked handle; the update helper
+    runs its tools by full System32 path; the "skip update check" and "skip
+    host probe" switches only work in development builds.
+  - Cloud uploads only send report files, never a file with several hard
+    links, and an outbox note that can't be checked right now is kept instead
+    of set aside. Report names drop the invisible characters the cloud refuses.
+  - The public share page shows when a run's results and its stored file
+    disagree, and such a run can't be shared. A stored file's name must match
+    its type, so a share link can't hand out a program labelled as a report.
+    The run page's warning no longer tells you to trust the file.
+  - The installer always installs under Program Files (a custom folder could
+    be writable by every user of the PC); deploys never upload links; the CI
+    workflow declares read-only permissions.
+  - Clearer messages: when "Server is the Linux agent" is off and the agent asks
+    for its token, the error says so; a saved token that can't be read on this
+    Windows account says that, and is never replaced behind your back; loading a
+    profile that turns the switch off says the token won't be used.
+  - The report's authentication line now reads "The Server proved it holds
+    the shared agent token": the token is shared by every Client laptop. Once
+    a token has been stored encrypted, a plain-text token placed in the
+    registry is refused, never used. A Server reuses its laptop details for
+    60 s, so repeated connections no longer start probe after probe, and a
+    count of refused connections states its real time window.
+- **Development:** GitHub Actions updated (checkout 7.0.1, setup-python
+  7.1.0, upload-artifact 7.0.2, download-artifact 8.0.2, Supabase CLI setup
+  3.2.0).
+
 ## [2.6.1] - 2026-11-22
 
 Three follow-ups from the 2.6.0 security review. Reports, sidecars (schema 13)
@@ -2717,7 +2818,8 @@ this version — see the first entry.
   (the documented default), instead of also turning PDF and TXT on.
 - The Analysis Diff tab's hint banner is now readable on the Light theme.
 
-[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v2.6.1...HEAD
+[Unreleased]: https://github.com/mhmd2520/Linkproven/compare/v2.7.0...HEAD
+[2.7.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.7.0
 [2.6.1]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.6.1
 [2.6.0]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.6.0
 [2.5.2]: https://github.com/mhmd2520/Linkproven/releases/tag/v2.5.2
